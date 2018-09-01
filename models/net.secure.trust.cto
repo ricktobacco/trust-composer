@@ -1,0 +1,126 @@
+/* Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+namespace net.secure.trust
+//Trust Equation Assets
+concept AccessBalance {
+  --> User user
+  o Integer balance
+}
+asset Resource identified by resourceID {
+  --> Service owner
+  o String resourceID 
+  o String contentHash
+  o Integer accessCost
+}
+enum TrustLevel { //highest to lowest, a la bond rating
+  o AAA
+  o AA
+  o A
+  o BBB
+}
+asset Trust extends Claim {
+  --> ClaimReceipt[] claimSet
+  --> Assessor grantor
+  o TrustLevel level
+}
+// Trust Function Assets
+concept Attribute {
+  o String key 
+  o String val
+}
+concept Proof {
+  o Attribute[] data
+  o String proofHash
+  o String proofName
+}
+enum ClaimType {
+  o USER
+  o DEVICE
+  o CONTEXT
+}
+enum ClaimStatus {
+  o DENIED
+  o PENDING
+  o APPROVED
+}
+concept ClaimDefinition {
+  o String name
+  o String[] keys
+  o ClaimType type 
+}
+abstract asset Claim identified by claimID {
+  --> User holder
+  o String claimID
+}
+asset ClaimReceipt extends Claim {
+  --> ClaimRequest req
+  --> User claimSubject
+  o ClaimDefinition def
+  o DateTime issuedDate 
+  o DateTime expireDate
+}
+asset ClaimRequest extends Claim {
+  --> Issuer issuer
+  o Proof[] proof
+  o ClaimStatus status default = 'PENDING'
+} 
+// Players of Trust Game
+participant User identified by name {
+  o String name
+}
+participant Assessor extends User { //perform due diligence
+  o ClaimDefinition[] claimDefs optional
+}
+participant Issuer extends Assessor {
+  o String[] trustees optional //ids of assessors
+}
+participant Service extends Issuer {
+  o AccessBalance[] balances optional
+}
+//TODO: are you sure strings?
+transaction IssueClaim {
+  o String requestID //ClaimRequest
+  o String expire //DateTime string
+  o String status //ClaimStatus str
+  o String name //name for ClaimDef
+  o String keys //comma separated
+  o String type //claim type 
+}
+transaction RequestClaim {
+  o Proof[] proof
+  o String issuer 
+}
+abstract transaction AuthorizeTx {
+  o String assessorID
+}
+transaction TrustFunction extends AuthorizeTx {
+  o String[] claims
+}
+//TODO: can these be one tx?
+transaction IssuerAuthorizeAssessor extends AuthorizeTx {}
+transaction ServiceAuthorizeAssessor extends AuthorizeTx {}
+abstract transaction BalanceTx {
+  o String serviceID
+}
+transaction TrustEquation extends BalanceTx {}
+transaction AccessResource extends BalanceTx {
+  o String resourceID
+}
+transaction UploadResource {
+  o String resourceID
+  o String contentHash
+  o Integer accessCost
+}
+event ResourceReleased {
+  o String contentHash
+}

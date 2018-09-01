@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Secure Trust Composer</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/home"><b style="color: #5dd13d">Secure</b> Trust Composer</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav mr-auto">
+      </ul>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="/about">About</a>
+        </li>
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="/register">Register</a>
+        </li>
+        <li class="nav-item text-nowrap dropdown">
+          <a class="nav-link dropdown-toggle " href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sign In</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown01">
+            <a class="dropdown-item" href="/user">User</a>
+            <a class="dropdown-item" href="/issuer">Issuer</a>
+            <a class="dropdown-item" href="/service">Service</a>
+            <a class="dropdown-item" href="/home">Assessor</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container text-center">
+    <div class="loader" id="loader" style="display:none;"></div>
+  </div>
+
+  <div class="jumbotron" id="loginSection" style="display:none;">
+    <div class="container">
+      <h2>Service Sign In</h2>
+      <br>
+      <div class="service-id">
+        <p> Enter Service Name: 
+          <input style="margin-left:23px">
+        </p>
+      </div>
+      <div class="card-id">
+        <p> Enter Access Card ID: 
+          <input style="margin-left:12px">
+        </p>
+      </div>
+      <button class="btn btn-primary sign-in-service">Sign In</button>
+    </div>
+  </div>
+  <div id="transactionSection" style="display:none;">
+    <div class="jumbotron" id="headSection" style="display:block;">
+      <div class="container">
+          <br><br>
+          <div style="padding-right: 20px">
+            <h2 class="service-name"></h2>
+          </div>
+        <!--div class="heading"> </div-->
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item tab-width">
+            <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true">Resources</a>
+          </li>
+          <li class="nav-item tab-width">
+            <a class="nav-link" id="assessors-tab" data-toggle="tab" href="#assessors" role="tab" aria-controls="assessors" aria-selected="false">+ / - Trustees</a>
+          </li>
+          <li class="nav-item tab-width">
+            <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="tab-content col-6" id="myTabContent">
+          <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+            <br>
+            <div>
+              <label><b>Resource ID </b></label>
+              <input type="text" class="form-control resource-id" placeholder="Some Unique Name" required></input>           
+            </div>
+            <br>
+            <div>
+              <label><b>Content Hash / Upload File</b></label>
+              <input type="text" class="form-control content-hash" value="QmXn6LutnKqzCA1zBKhxzVEmv5WaZeQrvt9eavESkLymuB" required></input>
+              <input type='file' id='someFileInputId'>
+            </div>
+            <br>
+            <div>
+              <label for="name"><b>Access Cost</b></label>
+              <input type="number" min="0" step="7" class="form-control access-cost" id="name" placeholder="42" required>
+            </div>
+            <br>
+            <button class="btn btn-primary btn-lg btn-block upload-resource" type="submit">Upload Resource</button>
+            <br><br>
+            
+          </div>
+          
+          <div class="tab-pane fade col-9" id="assessors" role="tabpanel" aria-labelledby="assessors-tab">
+            <br>
+            <b>Add an Assessor to Accept Trusts</b>
+            <button class="fas fa-plus btn btn-default add-assessor" style="float:right"></button>
+            <select class="form-control assessor-selector" style="margin-top: 15px; margin-bottom: 10px;"></select>
+          </div>
+            
+          <div class="tab-pane fade col-9" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+            <br>
+            <p>View transactions by transaction type </p>
+            <br>
+            <ul class="nav nav-tabs" id="transactionsTypeTab" role="tablist">
+              <li class="nav-item ">
+                <a class="nav-link active" id="points-allocated-tab" data-toggle="tab" href="#points-allocated" role="tab" aria-controls="points-allocated" aria-selected="true">Balances Allocated</a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link" id="points-redeemed-tab" data-toggle="tab" href="#points-redeemed" role="tab" aria-controls="points-redeemed" aria-selected="false">Balances Redeemed</a>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+              <div class="tab-pane fade show active" id="points-allocated" role="tabpanel" aria-labelledby="points-allocated-tab">
+                <br>
+                <div class="points-allocated-transactions"> </div>
+                <br><br>
+              </div>
+
+              <div class="tab-pane fade " id="points-redeemed" role="tabpanel" aria-labelledby="points-redeemed-tab">
+                <br>
+                <div class="points-redeemed-transactions"> </div>
+                <br><br>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script src="/scripts/service.js"></script>

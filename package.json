@@ -1,0 +1,41 @@
+{
+  "engines": {
+    "composer": "latest"
+  },
+  "name": "trust-network",
+  "version": "0.0.1",
+  "description": "Secure trust composer PoC",
+  "scripts": {
+    "prepublish": "composer archive create -t dir -n .",
+    "pretest": "npm run lint",
+    "lint": "eslint .",
+    "test": "nyc mocha -t 0 test/*.js && cucumber-js",
+    "start": "nodemon ./web-app/app.js"
+  },
+  "keywords": [
+    "composer",
+    "composer-network"
+  ],
+  "author": "Richard Tiutiun",
+  "email": "ricktobacco@gmail.com",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "composer-admin": "latest",
+    "composer-cli": "latest",
+    "composer-client": "latest",
+    "composer-common": "latest",
+    "composer-connector-embedded": "latest",
+    "composer-cucumber-steps": "latest",
+    "chai": "latest",
+    "chai-as-promised": "latest",
+    "cucumber": "latest",
+    "eslint": "latest",
+    "nyc": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "nodemon": "^1.18.3"
+  }
+}

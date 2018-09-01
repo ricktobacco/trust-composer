@@ -1,0 +1,88 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// HOW TO DO MORE COMPLEX QUERIES ??
+// WHERE ARE THESE CALLED UPON ANYWAY ??
+
+query selectUsers {
+  description: "Select all users"
+  statement:
+      SELECT net.secure.trust.User
+}
+
+query selectIssuers {
+  description: "Select all issuers"
+  statement:
+      SELECT net.secure.trust.Issuer
+}
+
+query selectAssessors {
+  description: "Select all assessors"
+  statement:
+      SELECT net.secure.trust.Assessor
+}
+
+query selectServices {
+  description: "Select all services"
+  statement:
+      SELECT net.secure.trust.Service
+}
+
+query selectResources {
+  description: "Select a Resources by Service"
+  statement:
+    SELECT net.secure.trust.Resource
+}
+
+query ClaimsByUserAndIssuer {
+  description: "Select ClaimRequests by User and Issuer"
+  statement:
+    SELECT net.secure.trust.ClaimRequest
+      WHERE (_$holder == holder AND _$issuer == issuer)
+}
+
+query PendingClaimsByIssuer {
+  description: "Select Pending ClaimRequests by Issuer"
+  statement:
+    SELECT net.secure.trust.ClaimRequest
+      WHERE (_$issuer == issuer AND 'PENDING' == status)
+}
+
+query ReceiptsByUserAndIssuer {
+  description: "Select a ClaimReceipts by User and Issuer"
+  statement:
+    SELECT net.secure.trust.ClaimReceipt
+      WHERE (_$holder == req.holder AND _$issuer == holder)
+}
+
+query ReceiptsBySubject {
+  description: "Select a ClaimReceipts by User"
+  statement:
+    SELECT net.secure.trust.ClaimReceipt
+      WHERE (_$subject == claimSubject)
+}
+
+query TrustsByUser {
+  description: "Select a Trusts by User"
+  statement:
+    SELECT net.secure.trust.Trust
+      WHERE (_$holder == holder)
+}
+
+query TrustsByUserAndAssessor {
+  description: "Select a Trusts by User and Assessor"
+  statement:
+    SELECT net.secure.trust.Trust
+      WHERE (_$holder == holder AND _$grantor == grantor)
+}

@@ -1,0 +1,10 @@
+[*] issuer: checkboxes for key vals, check all button
+[*] claim def pick from list (auto-check relevant keyvals after pick)
+[*] all: permissions.acl complete, transaction histories, loading divs
+[*] all: add (-) for every (+) , add subtype for reg and (+/-)
+[*] all: index click sign in pre-fill selector with participant type
+[*] all: events websockets , insurance balance 
+[*] user: edit proof , remove proof after claim requested?
+[*] user & service: auto-upload to IPFS, get hash  
+[*] service: map trust levels to balances, and add parameters to access costs
+[*] assessor: (claimdef, issuer, count) => balances (general/per resource)?

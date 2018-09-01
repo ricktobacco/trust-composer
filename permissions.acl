@@ -1,0 +1,219 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// rule UserAccessOwnRecord {
+//     description: "Allow User to access only their account"
+//     participant(p): "net.secure.trust.User"
+//     operation: ALL
+//     resource(r): "net.secure.trust.User"
+//     condition: (r.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// rule UserAccessUsers {
+//     description: "Deny User access to other User accounts"
+//     participant: "net.secure.trust.User"
+//     operation: ALL
+//     resource: "net.secure.trust.User"
+//     action: DENY
+// }
+
+// //DOES THIS MEAN USERS CAN WRITE TO THE INTERNALS OF AN ISSUER????
+// //IF I DO THIS FOR ASSESSOR DOES IT CARRY OVER TO ISSUER AS A SUBCLASS???
+// rule UserAccessAssessors {
+//     description: "Allow User access to all Assessors on the network"
+//     participant: "net.secure.trust.User"
+//     operation: READ
+//     resource: "net.secure.trust.Assessor"
+//     action: ALLOW
+// }
+
+// rule UserAccessIssuer{
+//     description: "Allow User read access to Issuers on the network"
+//     participant(p): "net.secure.trust.User"
+//     operation: READ
+//     resource(r): "net.secure.trust.Issuer"
+//     condition: (userHasClaimReceiptFromIssuer(r, p))
+//     action: ALLOW
+// }
+
+// rule UserAccessEarnBalance {
+//     description: "Allow User access only to EarnAccessBalance transaction where they are the User"
+//     participant(p): "net.secure.trust.User"
+//     operation: ALL
+//     resource(r): "net.secure.trust.EarnBalance"
+//     condition: (r.user.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// // SHOULD THIS BE THE CASE? LET USERS SELF-ASSIGN ACCESS BALANCES ???
+// // SHOULDN'T THE SERVICE DETERMINE THIS ON THE BASIS OF TRUST LEVEL ?
+// rule UserAccessSpendBalance {
+//     description: "Allow Member access only to SpendAccessBalance transaction where they are the User"
+//     participant(p): "net.secure.trust.User"
+//     operation: ALL
+//     resource(r): "net.secure.trust.SpendBalance"
+//     condition: (r.user.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// rule IssuerCreateReceiptsExclusive {
+//     description: "Allow User access to all Assessors on the network"
+//     participant: "net.secure.trust.Issuer"
+//     operation: CREATE
+//     resource: "net.secure.trust.ClaimReceipt"
+//     action: ALLOW
+// }
+
+// rule IssuerAccessOwnReceipts {
+//     description: "Allow User access to all Assessors on the network"
+//     participant(p): "net.secure.trust.Issuer"
+//     operation: ALL
+//     resource(r): "net.secure.trust.ClaimReceipt"
+//     condition: (r.holder.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// rule IssuerAccessOwnRecord {
+//     description: "Allow Issuer to access only their Issuer data"
+//     participant(p): "net.secure.trust.Issuer"
+//     operation: ALL
+//     resource(r): "net.secure.trust.Issuer"
+//     condition: (r.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// // SHOULD ASSESSORS BE ALLOWED TO ACCESS EACH OTHER ???
+// rule AssessorAccessOwnRecord {
+//     description: "Allow Assessor to access only their Assessor data"
+//     participant(p): "net.secure.trust.Assessor"
+//     operation: ALL
+//     resource(r): "net.secure.trust.Assessor"
+//     condition: (r.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// rule ServiceAccessOwnRecord {
+//     description: "Allow Partner to access only their profile"
+//     participant(p): "net.secure.trust.Service"
+//     operation: ALL
+//     resource(r): "net.secure.trust.Service"
+//     condition: (r.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// //Nobody has access to Users on the network except Users to their own selves
+// rule ServiceAccessUser {
+//     description: "Deny Service access to Users on the network"
+//     participant: "net.secure.trust.Service"
+//     operation: ALL
+//     resource: "net.secure.trust.User"
+//     action: DENY
+// }
+// rule AssessorAccessUser {
+//     description: "Deny Assessor access to Users on the network"
+//     participant: "net.secure.trust.Assessor"
+//     operation: ALL
+//     resource: "net.secure.trust.User"
+//     action: DENY
+// }
+// rule IssuerAccessUser {
+//     description: "Deny Issuer access to Users on the network"
+//     participant: "net.secure.trust.Issuer"
+//     operation: ALL
+//     resource: "net.secure.trust.User"
+//     action: DENY
+// }
+
+// // SHOULD I ACTUALLY ENABLE WRITES TOO? WHO SHOULD GET TO DO THE WRITES
+// //SHOULD I DENY ACCESS TO ALL OTHER TRANSACTIONS, OR IF NOT WHICH TYPES
+// //IS THERE A SHORTCUT ASTERISK SYMBOL I CAN USE ?
+
+// rule ServiceAccessEarnBalance {
+//     description: "Allow Services read only access to EarnBalance transactions where they are the service"
+//     participant(p): "net.secure.trust.Service"
+//     operation: READ
+//     resource(r): "net.secure.trust.EarnBalance"
+//     condition: (r.balance.service.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// rule ServiceAccessSpendBalance {
+//     description: "Allow Services read only access to SpendBalance transactions where they are the service"
+//     participant(p): "net.secure.trust.Service"
+//     operation: READ
+//     resource(r): "net.secure.trust.SpendBalance"
+//     condition: (r.balance.service.getIdentifier() === p.getIdentifier())
+//     action: ALLOW
+// }
+
+// //SPEND BALANCE TX SHOULD ALLOW THE USER VISIBILITY INTO THE SERVICE
+// //THEIR RESOURCES, THEIR BALANCES ARRAY
+
+// rule UserAcessSpendBalance {
+//     description: ""
+//     participant(p): "net.secure.trust.User"
+//     operation: READ
+//     resource(r): "net.secure.trust.Service"
+//     transaction(tx): "net.secure.trust.SpendBalance"
+//     condition:(userHasBalance(r, p))
+//     action: ALLOW 
+// }
+
+// rule CreateTrust {
+//     description: ""
+//     participant(p): "net.secure.trust.Assessor"
+//     operation: CREATE
+//     resource(r): "net.secure.trust.Trust"
+//     transaction(tx): "net.secure.trust.TrustFunction"
+//     condition:(assessorTrustedByIssuer(r, p))
+//     action: ALLOW 
+// }
+
+///////////////////////////////////////////////////////////////////////////
+ rule AllAccess {
+  description: "grant everything to everybody"
+  participant: "ANY"
+  operation: ALL
+  resource: "net.secure.trust.**"
+  action: ALLOW
+ }
+ 
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "ANY"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+//TODO: 
+//only issuers create receipts
+//only services upload resources
