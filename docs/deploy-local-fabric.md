@@ -50,6 +50,7 @@ Now, we are ready to deploy the business network to Hyperledger Fabric. This req
 
 ```
 cd ../
+npm install
 composer network install --card PeerAdmin@hlfv1 --archiveFile trust-network@0.0.1.bna
 ```
 
