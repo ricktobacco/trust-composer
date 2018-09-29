@@ -144,7 +144,6 @@ app.post('/api/issuerData', async function(req, res) {
                   returnData.trustees = [];
   
                 returnData.assessors = await network.assessorsMinusTrustees(cardID, returnData.trustees);
-                console.log(trustees);
     
                 res.json(returnData);
             }
