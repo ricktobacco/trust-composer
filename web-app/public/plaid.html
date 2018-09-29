@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plaid Quickstart Example</title>
+<link rel="stylesheet" href="https://threads.plaid.com/threads.css">
+
+<link rel="stylesheet" type="text/css" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <main class="main">
+    <div class="grid">
+      <div class="grid__column grid__column--is-twelve-columns">
+        <div id="container" class="initial-view">
+          <button id="link-btn" class="button button--is-primary">Connect with Plaid</button>
+        </div>
+        <div id="app" class="connected-view">
+          <div class="box">
+            <!-- Balance -->
+            <div class="item-data-row">
+              <div class="item-data-row__right">
+                <button id="get-balance-btn" class="button button--is-small button--is-default button--is-full-width">Send request</button>
+              </div>
+              <div class="item-data-row__response">
+                <table><tbody id="get-balance-data"></tbody></table>
+              </div>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  <script>
+  (function($) {
+    var handler = Plaid.create({
+      apiVersion: 'v2',
+      clientName: 'Plaid Quickstart',
+      env: '<%= PLAID_ENV %>',
+      product: ['transactions'],
+      key: '<%= PLAID_PUBLIC_KEY %>',
+      // webhook: 'https://your-domain.tld/plaid-webhook',
+      onSuccess: function(public_token) {
+        $.post('/get_access_token', {
+          public_token: public_token
+        }, function(data) {
+          $('#container').fadeOut('fast', function() {
+            $('#item_id').text(data.item_id);
+            $('#access_token').text(data.access_token);
+            $('#intro').hide();
+            $('#app, #steps').fadeIn('slow');
+          });
+        });
+      },
+    });
+    var accessToken = qs('access_token');
+    if (accessToken != null && accessToken != '') {
+      $.post('/set_access_token', {
+        access_token: accessToken
+      }, function(data) {
+        $('#container').fadeOut('fast', function() {
+          $('#item_id').text(data.item_id);
+          $('#access_token').text(accessToken);
+          $('#intro').hide();
+          $('#app, #steps').fadeIn('slow');
+        });
+      });
+    }
+
+    $('#link-btn').on('click', function(e) {
+      handler.open();
+    });
+
+
+    $('#get-balance-btn').on('click', function(e) {
+      $.get('/balance', function(data) {
+        $('#get-balance-data').slideUp(function() {
+          var balanceData = data.balance;
+          var html = '<tr><td><strong>Balance</strong></td></tr>';
+          balanceData.accounts.forEach(function(account, idx) {
+            html += '<tr>';
+            html += '<td>$' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</td>'
+            html += '</tr>';
+          });
+
+          $(this).html(html).slideDown();
+        });
+      });
+    });
+  })(jQuery);
+
+function qs(key) {
+    key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+    var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+    return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+}
+  </script>
+</body>
+</html>

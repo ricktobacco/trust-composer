@@ -5,7 +5,7 @@ var apiUrl = location.protocol + '//' + location.host + "/api/";
 $('.sign-in-user').click(function() {
   updateUser();
 });
-  
+
 function findCommonElements(arr) {
   // an array to hold the count of each elements in the input elements
   var lookupArray = [];
@@ -94,12 +94,15 @@ function updateUser() {
         });
         $('.issuer_selector').html(function(){
           var str = '<option value="" disabled="" selected="">select</option>';
-          for (let issuer of data['issuers'])
-            str += '<option value=' + issuer.name + '> ' + issuer.name + '</option>';
+          for (let issuer of data['issuers']){
+            let name = '"' + issuer.name + '"';
+            str += '<option value=' + name + '>' + issuer.name + '</option>';
+          }
           return str;
         });
         $('.request-claim').click(function() {
           let issuerID = $('.issuer_selector').val();
+          console.log(issuerID);
           let inputData = { 'cardID' : formcardID,
                           'issuerID' : issuerID,
                         'proofNames' : [],
@@ -232,7 +235,8 @@ function updateUser() {
         $('.service_selector').html(function(){
           var str = '<option value="" disabled="" selected="">select</option>';
           for (let service of data['services']) {
-            str += '<option value=' + service.name + '> ' + service.name + '</option>';
+            let name = '"' + service.name + '"';
+            str += '<option value=' + name + '> ' + service.name + '</option>';
           }
           return str;
         });
@@ -278,8 +282,10 @@ function updateUser() {
             var str = '<option value="" disabled="" selected="">select</option>';
             for (let service of data['services'])
               if (service.name === serviceID)
-                for (let resource of service.resources)
-                  str += '<option value=' + resource.resourceID + '> ' + resource.resourceID + '</option>';
+                for (let resource of service.resources) {
+                  let name = '"' + resource.resourceID + '"';
+                  str += '<option value=' + name + '> ' + resource.resourceID + '</option>';
+                }
             return str;
           });
         });
@@ -323,7 +329,7 @@ function updateUser() {
                   alert(res.error);
                   return;
                 } else
-                  alert(hash);
+                  window.setTimeout(function(){ window.location = "http://ipfs.io/ipfs/" + hash; }, 100);
               },
               error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown); console.log(textStatus); console.log(jqXHR);
@@ -341,7 +347,8 @@ function updateUser() {
           return str;
         });
         //remove login section and display member page
-        //document.getElementById('loginSection').style.display = "none";
+        document.getElementById('loginSection').style.display = "none";
+        //display transaction section
         document.getElementById('transactionSection').style.display = "block";
       }
     },

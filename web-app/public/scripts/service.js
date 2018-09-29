@@ -37,6 +37,7 @@ function updateService() {
           var resourceID = $('.resource-id').val();
           var accessCost = $('.access-cost').val();
           var contentHash = $('.content-hash').val();
+          
           //create json data
           let inputData = '{' + '"cardID" : "' + formcardID + '", ' + 
                             '"resourceID" : "' + resourceID + '", ' + 
@@ -124,7 +125,7 @@ function updateService() {
         // });
 
         //remove login section
-        //document.getElementById('loginSection').style.display = "none";
+        document.getElementById('loginSection').style.display = "none";
         //display transaction section
         document.getElementById('transactionSection').style.display = "block";
       }

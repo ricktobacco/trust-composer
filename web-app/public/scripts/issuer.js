@@ -209,7 +209,7 @@ function updateIssuer() {
           return str;
         });
         //remove login section
-        //document.getElementById('loginSection').style.display = "none";
+        document.getElementById('loginSection').style.display = "none";
         //display transaction section
         document.getElementById('transactionSection').style.display = "block";
       }

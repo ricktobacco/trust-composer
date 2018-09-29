@@ -1,6 +1,5 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>Secure Trust Composer</title>
@@ -9,6 +8,27 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script type="text/javascript">
+    function upload() {
+      document.getElementById('loader').style.display = "block";
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        const ipfs = window.IpfsApi('ipfs.infura.io', '5001', {protocol: 'https'})
+        const buf = buffer.Buffer(reader.result) // Convert data into buffer
+        ipfs.files.add(buf, (err, result) => { // Upload buffer to IPFS
+          if(err) {
+            console.error(err)
+            return
+          }    
+          document.getElementById('loader').style.display = "none";
+        //  $('input[name="proofHash"]').attr('value', `${result[0].hash}` );
+          document.getElementById("proofhash").value = result[0].hash;
+        })
+      }
+      const photo = document.getElementById("photo");
+      reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
+    }
+  </script>
 </head>
 
 <body class="bg-light">
@@ -21,7 +41,6 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
       <ul class="navbar-nav mr-auto">
-
       </ul>
 
       <ul class="navbar-nav px-3">
@@ -49,7 +68,7 @@
     <div class="loader" id="loader" style="display:none;"></div>
   </div>
 
-  <div class="jumbotron" id="loginSection" style="display:none;">
+  <div class="jumbotron" id="loginSection" style="display:block;">
     <div class="container">
       <br><br>
       <h2>User Sign In</h2>
@@ -68,14 +87,18 @@
     </div>
   </div>
 
-
   <div id="transactionSection" style="display:none;">
-
 
     <div class="jumbotron" id="headSection" style="display:block;">
       <div class="container">
           <br><br>
-          <div style="padding-right: 20px">
+          <div style="float:right;">
+              <button class="btn btn-primary" id="link-btn">Connect Bank Account with Plaid</button>
+              <button class="btn btn-default" id="get-balance-btn" >Request Account Balance</button>
+              <h4 id="get-balance-data"></h4>
+          </div>
+          <br><br>
+          <div style="padding-right: 20px" >
             <h2 class="user-name"></h2>
           </div>
       </div>
@@ -115,7 +138,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <input name="proofName" placeholder=" Proof Name" style="width:50%;"></input>
-                      <input name="proofHash" placeholder=" Proof URL / IPFS Hash" style="width:50%;"></input>
+                      <input id="proofhash" name="proofHash" placeholder=" Proof URL / IPFS Hash" style="width:50%;"></input>   
                     </div>
                     <div class="modal-body"> 
                       <div class="row">
@@ -128,6 +151,7 @@
                       </div>  
                     </div>
                     <div class="modal-footer">
+                      <input type="file" onchange="upload()" name="photo" style="margin-right:74px" id="photo">
                       <button class="add_attr fas fa-plus" style="margin-right: 10px;"></button>
                       <button class="save-proof fas fa-save" style="margin-right: 10px;"></button>
                     </div>
@@ -192,3 +216,74 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 <script src="/scripts/user.js"></script>
+<script src="/scripts/buffer.js"></script>
+<script src="https://unpkg.com/ipfs-api/dist/index.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+(function($) {
+  var singedIn = false;
+  var handler = Plaid.create({
+    apiVersion: 'v2',
+    clientName: 'Plaid Quickstart',
+    env: '<%= PLAID_ENV %>',
+    product: ['transactions'],
+    key: '<%= PLAID_PUBLIC_KEY %>',
+    // webhook: 'https://your-domain.tld/plaid-webhook',
+    onSuccess: function(public_token) {
+      $.post('/get_access_token', {
+        public_token: public_token
+      }, function(data) {
+        $('#container').fadeOut('fast', function() {
+          $('#item_id').text(data.item_id);
+          $('#access_token').text(data.access_token);
+          $('#intro').hide();
+          $('#app, #steps').fadeIn('slow');
+        });
+      });
+    },
+  });
+  var accessToken = qs('access_token');
+  if (accessToken != null && accessToken != '') {
+    $.post('/set_access_token', {
+      access_token: accessToken
+    }, function(data) {
+      $('#container').fadeOut('fast', function() {
+        $('#item_id').text(data.item_id);
+        $('#access_token').text(accessToken);
+        $('#intro').hide();
+        $('#app, #steps').fadeIn('slow');
+      });
+    });
+  }
+
+  $('#link-btn').on('click', function(e) {
+    handler.open();
+    signedIn = true;
+  });
+
+  $('#get-balance-btn').on('click', function(e) {
+    if (signedIn)
+      $.get('/balance', function(data) {
+        $('#get-balance-data').slideUp(function() {
+          var balanceData = data.balance;
+          var html = '<strong>Balance</strong>';
+          balanceData.accounts.forEach(function(account, idx) {
+            html += (account.balances.available != null ? account.balances.available : account.balances.current);
+          });
+
+          $(this).html(html).slideDown();
+        });
+      });
+    else
+      alert("First Connect with Plaid!");
+  });
+})(jQuery);
+
+function qs(key) {
+  key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+  var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+  return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+}
+</script>

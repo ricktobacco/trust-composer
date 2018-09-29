@@ -6,18 +6,41 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const path = require('path')
+var envvar = require('envvar');
+var moment = require('moment');
 
 //create express web-app
 const app = express();
 const router = express.Router();
+const plaid = require('plaid');
 
-var network = require('./network/network.js');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_CLIENT_ID = '5baeebbb05b6800011bec506';
+var PLAID_SECRET = '93358966f27eba60ce3334f6b1dd51';
+var PLAID_PUBLIC_KEY = '0e156662f1c4288d60e5e21ccf7f6a';
+
+var ACCESS_TOKEN = null;
+var PUBLIC_TOKEN = null;
+var ITEM_ID = null;
+
+const client = new plaid.Client(
+  PLAID_CLIENT_ID,
+  PLAID_SECRET,
+  PLAID_PUBLIC_KEY,
+  plaid.environments[PLAID_ENV]
+);
+
+const network = require('./network/network.js');
 //var validate = require('./network/validate.js');
 //var analysis = require('./network/analysis.js');
 
 app.use(express.static(__dirname + '/public'));
 app.use('/scripts', express.static(path.join(__dirname, '/public/scripts')));
+app.set('view engine', 'ejs');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 app.get('/', function(req, res) {
   res.redirect('/home');
@@ -28,7 +51,10 @@ app.get('/home', function(req, res) {
 });
 
 app.get('/user', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/user.html'));
+  res.render(path.join(__dirname + '/public/user.ejs'),  {
+    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+    PLAID_ENV: PLAID_ENV,
+  });
 });
 
 app.get('/issuer', function(req, res) {
@@ -46,6 +72,43 @@ app.get('/register', function(req, res) {
 app.get('/about', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/about.html'));
 });
+
+app.post('/get_access_token', function(request, response, next) {
+  PUBLIC_TOKEN = request.body.public_token;
+  client.exchangePublicToken(PUBLIC_TOKEN, function(error, 
+tokenResponse) {
+    if (error != null) {
+      var msg = 'Could not exchange public_token!';
+      console.log(msg + '\n' + JSON.stringify(error));
+      return response.json({
+        error: msg
+      });
+    }
+    ACCESS_TOKEN = tokenResponse.access_token;
+    ITEM_ID = tokenResponse.item_id;
+    prettyPrintResponse(tokenResponse);
+    response.json({
+      access_token: ACCESS_TOKEN,
+      item_id: ITEM_ID,
+      error: false
+    });
+  });
+});
+
+// Retrieve real-time Balances for each of an Item's accounts
+// https://plaid.com/docs/#balance
+app.get('/balance', function(request, response, next) {
+    client.getBalance(ACCESS_TOKEN, function(error, balanceResponse) {
+      if (error != null) {
+        prettyPrintResponse(error);
+        return response.json({
+          error: error,
+        });
+      }
+      prettyPrintResponse(balanceResponse);
+      response.json({error: null, balance: balanceResponse});
+    });
+  });
 
 app.post('/api/userData', function(req, res) {
   var cardID = req.body.cardID;
@@ -72,13 +135,16 @@ app.post('/api/issuerData', async function(req, res) {
               });
             } else {
                 returnData.name = issuer.name;
+      
                 returnData.requests = await network.pendingClaimRequests(cardID, issuerID);
                 
                 if (issuer.trustees)
                   returnData.trustees = issuer.trustees;
                 else  
                   returnData.trustees = [];
+  
                 returnData.assessors = await network.assessorsMinusTrustees(cardID, returnData.trustees);
+                console.log(trustees);
     
                 res.json(returnData);
             }

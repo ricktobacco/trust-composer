@@ -16,6 +16,7 @@ concept AccessBalance {
   --> User user
   o Integer balance
 }
+//Drug prescribed, cost per dose, service is seller
 asset Resource identified by resourceID {
   --> Service owner
   o String resourceID 
@@ -86,6 +87,7 @@ participant Issuer extends Assessor {
 }
 participant Service extends Issuer {
   o AccessBalance[] balances optional
+  
 }
 //TODO: are you sure strings?
 transaction IssueClaim {

@@ -1,10 +1,66 @@
-[*] issuer: checkboxes for key vals, check all button
-[*] claim def pick from list (auto-check relevant keyvals after pick)
-[*] all: permissions.acl complete, transaction histories, loading divs
-[*] all: add (-) for every (+) , add subtype for reg and (+/-)
+[0] issuer: checkboxes for key vals, check all button
+
+[0] claim def pick from list (auto-check relevant keyvals after pick)
+
+[1] all: permissions.acl complete, transaction histories, loading divs
+
+[0] all: add (-) for every (+) , add subtype for reg and (+/-)
+
 [*] all: index click sign in pre-fill selector with participant type
+
 [*] all: events websockets , insurance balance 
-[*] user: edit proof , remove proof after claim requested?
-[*] user & service: auto-upload to IPFS, get hash  
-[*] service: map trust levels to balances, and add parameters to access costs
+ 
+
+[***] user & service: auto-upload to IPFS, get hash  
+
+[***] service: map trust levels to balances, and add parameters to access costs
+Charity
+for health assessor trust level aaa give balance 500
+for bbb give balance 10000
+ 
+
+PERSON had some body damage from disaster
+PERSON needs to be covered by health insurance to get HOSPITAL help (surgeries, etc)
+PERSON has to show PROOF of residence in disaster-struck area
+PERSON collects claims from ISSUERS (bank, utility companies, property mgmt) about residence, identity
+PERSON submits claims to ASSESSOR (insurance company) for guarantee (higher guarantee, better coverage)
+HOSPITAL considers level of guarantee from ASSESSOR to grant resources (surgeries, etc)
+
+mail-order prescription services, and this may be an option, but you will want to check with your health insurance company.
+
+HOSPITAL can make share medical history claims about PERSON with ASSESSOR
+Serice is Disaster Charity
+
+
+
+
+
+
+
 [*] assessor: (claimdef, issuer, count) => balances (general/per resource)?
+
+
+//claim from plaid
+//websocket for events
+
+
+
+if our donations are really improving the lives of people in need. 
+
+Sign up for National Weather Service alerts to receive SMS text and email alerts, and see their suggested weather apps to stay informed.
+
+If your settlement has been delayed longer than 30 days from the time you filed your claim, you may write FEMA to explain the reason for the delay. Any funds you get from FEMA would then be considered an advance and must be repaid when you get your settlement.
+
+DMV shitty HealthCare
+Police station no record
+
+
+Enrollment or plan information display errors
+Misinformation, misrepresentation, misconduct, or inaction of someone working in an official capacity to help you enroll (like an insurance company, navigator, certified application counselor, or agent or broker) kept you from:
+Enrolling in a plan
+Enrolling in the right plan
+Getting the premium tax credit or cost-sharing reduction you were eligible for
+A technical error occurred when you applied on HealthCare.gov -- you probably saw an error message when completing your application – that prevented:
+You from enrolling in a plan, or
+Your health insurance company from receiving your enrollment information
+The wrong plan data was displayed on HealthCare.gov at the time that you selected your health plan, such as benefit or cost-sharing information.
